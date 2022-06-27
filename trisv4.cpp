@@ -1,12 +1,12 @@
-/******************************************************************************
+/**================================================================================================
+ * ?                                           ABOUT:
+ ** @author        :  Francesco Pio Nocerino
+ * @email          :  nocerpio9@gmail.com
+ * @createdOn      :  Jun-2022
+ * @filename       :  trisv4.cpp
+ * @description    :  Gioco del Tris (Tic-Tac-Toe)
+ *================================================================================================**/
 
-                    //? Autore:Francesco Pio Nocerino
-                    //! Nome: tris3.cpp
-                    Descr:
-                        //TODO:    Gioco TRIS
-                //todo:  Macchina VS Uomo al gioco del tris
-
-*******************************************************************************/
 #ifdef _WIN32 //? implementazione Win
 #include <windows.h>
 #define GREEN 10
@@ -15,6 +15,7 @@
 #define YELLOW 14
 #define BLUE 9
 #define MAGENTA 13
+/*================================ COLORI ==============================*/
 #elif __APPLE__
 #define GREEN "92"
 #define RED "91"
@@ -35,8 +36,8 @@ using namespace std;
 #define C 3 //! numero di colonne
 #define R 3 //! numero di righe
 
+/*========================================================================*/
 void cl(); // pulisci schermo
-
 #ifdef _WIN32
 void set_console_color(int dim);   //*Win
 void size_shell(int h, int w);     //* Ridimensiona la shell
@@ -57,6 +58,7 @@ string color(string word, string back, char frase);
 string color(string word, string back, int num);
 string color(string word, string back, float num);
 #endif
+/*========================================================================*/
 
 void gen(char &ply, char &pc, int &nG);    // generatore di simbolo
 int num(int Max);                          // generazione numero random
@@ -67,6 +69,8 @@ void run(char segno, char segno_macchina, char tab[R][C], bool full, int &n_ply)
 void ps(int &x, int &r, int &c);                                                  // Posizioni
 void giocatore(char segno, char tab[R][C], bool full);                            // giocatore 1
 void stampa(int dim, char segno_umano, char tab[R][C], int n_color);              // stampa tavola
+/*================================ LOGICA ==============================*/
+
 bool mosse(int dim, char tab[R][C], char segno_uomo, bool &win);
 bool punt(int p);                                                     // punti
 bool orzizzontale(int dim, char tab[R][C], char segno, bool &win);    // controllo
@@ -74,6 +78,7 @@ bool verticale(int dim, char tab[R][C], bool &win, char segno_uomo);  // control
 bool diagonale(int dim, char tab[R][C], bool &win, char segno_uomo);  // controllo
 bool diagonale2(int dim, char tab[R][C], bool &win, char segno_uomo); // controllo
 bool piena(int dim, char tab[R][C]);
+/*================================ GRAFICA ==============================*/
 
 void banner();                   // banner
 void banner_vincita(char segno); // Stampa i banner
@@ -81,6 +86,7 @@ void banner_X();                 // banner 'X'
 void banner_O();                 // banner 'O'
 void banner_parita();            // banner parita
 void guida();
+/*============================ FINE PROTOTIPI ============================*/
 
 int main()
 {
@@ -93,19 +99,19 @@ int main()
     gen(umano, pc, n_ply);                 //*generazione dei simboli 'X' o 'O'
 
     inizializza(R, tab);
-
+//? Ridimensionamento shell
 #ifdef _WIN32
     size_shell(1100, 600);
 #elif __APPLE__
     size_shell_MacOS("130", "25");
 #endif
 
-    banner();
+    banner(); //! Stampa banner
 
 #ifdef _WIN32
     size_shell(800, 600);
 #elif __APPLE__
-    size_shell_MacOS("85", "17");
+    size_shell_MacOS("85", "18");
 #endif
 
     while (conta <= N_PARTITE)
@@ -184,7 +190,12 @@ void cl()
 
 int num(int Max)
 {
-    //* Generatore di numeri casuali
+    /**----------------------------------------------
+     **              NUM
+     *?  Generatore di numeri casuali 
+     *@param Max int  
+     *@return int
+     *---------------------------------------------**/
     srand(unsigned(time(NULL)));
     int n = rand() % Max;
     return n;
@@ -192,6 +203,13 @@ int num(int Max)
 
 void info(char umano, char pc, int punteggio_uomo, int punteggio_pc, int n_partite)
 {
+    /**----------------------------------------------
+     **              INFO
+     *?  Stampa informazioni sulla partita  punteggio e numero partite
+     *@param umano, pc char  
+     *@param punteggio_uomo, punteggio_pc e n_partite int  
+     *@return voids
+     *---------------------------------------------**/
 #ifdef _WIN32
     cout << "PLY1 > ";
     set_console_color(GREEN);
@@ -224,7 +242,12 @@ void info(char umano, char pc, int punteggio_uomo, int punteggio_pc, int n_parti
 
 void sleep(int d)
 {
-//* Sleep millisecondi
+/**----------------------
+ **   SLEEP
+ *?   Implementazione sleep x tutti i SO
+ *@param d int  
+ *@return void
+ *------------------------**/
 #ifdef _WIN32
     Sleep(d);
 #elif __APPLE__
@@ -234,7 +257,13 @@ void sleep(int d)
 
 void gen(char &ply, char &pc, int &nG)
 {
-    //* Assegna i simboli ai giocatori random
+    /**------------------------------------------------------------------------
+     **                           GEN
+     *?  Assegna i simboli ai giocatori a random
+     *@param &ply, &pc char  
+     *@param &nG int  
+     *@return void
+     *------------------------------------------------------------------------**/
     int n = num(2), n2 = num(2);
     bool trv = false;
     char v[2] = {'X', 'O'};
@@ -260,6 +289,12 @@ void gen(char &ply, char &pc, int &nG)
 
 void ps(int &x, int &r, int &c)
 {
+    /**------------------------------------------------------------------------
+     **                           PS
+     *?  Scelto il numero dalla griglia restituisce la posizione 
+     *@param &x, &r e &c int  
+     *@return void
+     *------------------------------------------------------------------------**/
     cout << "Inserisci numero della posizione  > ";
     cin >> x;
     bool trv = false;
@@ -318,7 +353,13 @@ void ps(int &x, int &r, int &c)
 
 void giocatore(char segno, char tab[R][C], bool full)
 {
-    //! Giocatore
+    /**------------------------------------------------------------------------
+     **                           GIOCATORE
+     *?  Permette l'input ai giocatori 
+     *@param segno, tab[][] char  
+     *@param full bool  
+     *@return void
+     *------------------------------------------------------------------------**/
     int riga, colonna, n;
     bool trv = false;
     if (full)
@@ -344,7 +385,14 @@ void giocatore(char segno, char tab[R][C], bool full)
 
 void run(char segno, char segno_macchina, char tab[R][C], bool full, int &n_ply)
 {
-    //! Inserimento coordinate da parte dei ply
+    /**------------------------------------------------------------------------
+   **                           RUN
+   *?  Inserimento e stampa 
+   *@param segno, segno_macchina e tab[][] char  
+   *@param full bool  
+   *@param &n_ply iny  
+   *@return void
+   *------------------------------------------------------------------------**/
 #ifdef _WIN32
     if (n_ply == 0)
     {
@@ -479,7 +527,13 @@ void stampa(int dim, char segno_umano, char tab[R][C], int n_color)
 
 void inizializza(int dim, char tab[R][C])
 {
-    //*Inizializzazione della tabella
+    /**----------------------
+     **   INIZIALIZZA
+     *? Inizializzazione tabella 
+     *@param dim int
+     *@param tab[][] char
+     *@return void
+     *------------------------**/
     int conta = 1;
     for (int i = 0; i < dim; i++)
     {
@@ -491,20 +545,28 @@ void inizializza(int dim, char tab[R][C])
     }
 }
 
-bool punt(int p)
-{
-    //! Punteggio
+// bool punt(int p)
+// {
+//     //! Punteggio
 
-    bool f;
-    if (p >= 3)
-        f = true;
-    else
-        f = false;
-    return f;
-}
+//     bool f;
+//     if (p >= 3)
+//         f = true;
+//     else
+//         f = false;
+//     return f;
+// }
 
 bool mosse(int dim, char tab[R][C], char segno_uomo, bool &win)
 {
+    /**------------------------------------------------------------------------
+     **                           MOSSE
+     *?  Controllo delle mosse da parte dei giocatori
+     *@param dim int  
+     *@param tab[][], segno_uomo char  
+     *@param &win bool  
+     *@return bool
+     *------------------------------------------------------------------------**/
     bool m1 = false, m2 = false, m3 = false, m4 = false;
     bool r;
     m1 = orzizzontale(dim, tab, segno_uomo, win); // controllo mosse in linea orizzontale
@@ -521,7 +583,14 @@ bool mosse(int dim, char tab[R][C], char segno_uomo, bool &win)
 
 bool orzizzontale(int dim, char tab[R][C], char segno, bool &win)
 {
-    //* Controllo della tabella in orizzontale
+    /**----------------------
+     **   ORIZZONTALE
+     *? Controllo linee orizontali
+     *@param dim int  
+     *@param tab[][], segno char  
+     *@param &win bool  
+     *@return bool
+     *------------------------**/
     bool trv = false;
     int x;
     for (int i = 0; i < dim && !trv; i++)
@@ -548,8 +617,14 @@ bool orzizzontale(int dim, char tab[R][C], char segno, bool &win)
 
 bool verticale(int dim, char tab[R][C], bool &win, char segno_uomo)
 {
-    //* Controllo verticale
-
+    /**----------------------
+     **   VERTICALE
+     *? Controllo linee verticali
+     *@param dim int  
+     *@param tab[][], segno char  
+     *@param &win bool  
+     *@return bool
+     *------------------------**/
     bool trv = false, fine = false;
     int conta = 0, i, j = 0, p;
     while (conta < dim && !fine)
@@ -589,8 +664,14 @@ bool verticale(int dim, char tab[R][C], bool &win, char segno_uomo)
 
 bool diagonale(int dim, char tab[R][C], bool &win, char segno_uomo)
 {
-    //* Controllo diagonale principale
-
+    /**----------------------
+     **   DIAGONALE
+     *? Controllo diagonale
+     *@param dim int  
+     *@param tab[][], segno char  
+     *@param &win bool  
+     *@return bool
+     *------------------------**/
     bool trv = false;
     int i = 0, conta = 0, conta2 = 0;
 
@@ -625,7 +706,14 @@ bool diagonale(int dim, char tab[R][C], bool &win, char segno_uomo)
 
 bool diagonale2(int dim, char tab[R][C], bool &win, char segno_uomo)
 {
-    //* Controllo antidiagonale
+    /**----------------------
+     **   DIAGONALE2
+     *? Controllo antidiagonale
+     *@param dim int  
+     *@param tab[][], segno char  
+     *@param &win bool  
+     *@return bool
+     *------------------------**/
     bool trv = false;
     int i = dim - 1, conta = 0, conta2 = 0;
 
@@ -662,8 +750,13 @@ bool diagonale2(int dim, char tab[R][C], bool &win, char segno_uomo)
 
 bool piena(int dim, char tab[R][C])
 {
-    //* Controllo tabella piena
-
+    /**----------------------
+     **   PIENA
+     *? Controllo tabella se piena
+     *@param dim int  
+     *@param tab[][] char
+     *@return bool
+     *------------------------**/
     bool trv = false;
     int conta = 0;
 
@@ -686,11 +779,23 @@ bool piena(int dim, char tab[R][C])
 
 //? Colori x tutti i SO
 #ifdef _WIN32
+/**----------------------
+ **   SET_CONSOLE_COLOR
+ *? Colori x shell Win
+ *@param cl int  
+ *@return void
+ *------------------------**/
 void set_console_color(int cl)
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, cl);
 }
+/**----------------------
+ **   SIZE_SHELL
+ *? Ridimensionamento terminale Win
+ *@param cl int  
+ *@return void
+ *------------------------**/
 void size_shell(int h, int w) //! Ridimensiona shell data altezza e larghezza
 {
     HWND console = GetConsoleWindow();
@@ -699,12 +804,25 @@ void size_shell(int h, int w) //! Ridimensiona shell data altezza e larghezza
 
     MoveWindow(console, ConsoleRect.left, ConsoleRect.top, h, w, TRUE);
 }
+/*=============================================*/
 #elif __APPLE__
+/**----------------------
+ **   SIZE_SHELL_MacOS
+ *? Ridimensionamento terminale MacOS
+ *@param h e w string  
+ *@return void
+ *------------------------**/
 void size_shell_MacOS(string h, string w) //!Ridimensiona shell data altezza e largehzza su UNIX
 {
     cout.flush();
     cout << "\e[8;" + w + ";" + h + "t";
 }
+/**----------------------
+ **   COLOR
+ *? Colori x shell MacOS
+ *@param word, back e frase string  
+ *@return string
+ *------------------------**/
 string color(string word, string back, string frase)
 {
     string tot = "\033[" + back + ";" + word + "m" + frase + "\033[0m";
@@ -732,7 +850,11 @@ string color(string word, string back, float num)
 
 void banner()
 {
-    //* Banner
+/**----------------------
+ **   BANNER
+ *? Banner inziale
+ *@return void
+ *------------------------**/
 #ifdef _WIN32
     cout << "\t\t\t\t__  __    _    ___    _   __  __\n";
     cout << "\t\t\t\t\\ \\/ /   | |  / _ \\  | |  \\ \\/ /\n";
@@ -769,6 +891,8 @@ void banner()
     set_console_color(WHITE);
     cout << endl
          << endl;
+    /*=============================================*/
+
 #elif __APPLE__
     cout << endl;
     cout << "\t\t\t\t   ▚▗▘   ▐   ▞▀▖  ▐  ▚▗▘\n";
@@ -798,8 +922,12 @@ void banner()
 
 void banner_vincita(char segno)
 {
-    //! In base al giocatore vincente stampa il suo simbolo corrispondete
-
+    /**----------------------
+    **   SIZE_SHELL_MacOS
+    *? Dato il segno del vincitore stampa il suo rispettivo banner Win
+    *@param segno char  
+    *@return void
+    *------------------------**/
     switch (segno)
     {
     case 'X':
@@ -813,7 +941,11 @@ void banner_vincita(char segno)
 
 void banner_O()
 {
-    //* Banner giocatore 'O'
+    /**----------------------
+    **   BANNER_O
+    *? Banner per il simbolo 'O' 
+    *@return void
+    *------------------------**/
 
 #ifdef _WIN32
 
@@ -838,6 +970,8 @@ void banner_O()
     set_console_color(MAGENTA);
     cout << "\\___/(_)\n";
     set_console_color(WHITE);
+    /*=============================================*/
+
 #elif __APPLE__
 
     cout << setw(80) << color(BLUE, "", " ▌ ▌▜▘▙ ▌") << color(MAGENTA, "", " ▞▀▖ ▐\n");
@@ -850,7 +984,12 @@ void banner_O()
 
 void banner_X()
 {
-//* Banner giocatore 'X'
+    /**----------------------
+    **   BANNER_X
+    *? Banner per il simbolo 'X' 
+    *@return void
+    *------------------------**/
+
 #ifdef _WIN32
 
     set_console_color(GREEN);
@@ -874,6 +1013,8 @@ void banner_X()
     set_console_color(MAGENTA);
     cout << "/_/\\_(_)\n";
     set_console_color(WHITE);
+    /*=============================================*/
+
 #elif __APPLE__
 
     cout << setw(80) << color(BLUE, "", " ▌ ▌▜▘▙ ▌") << color(MAGENTA, "", " ▚▗▘ ▐\n");
@@ -886,7 +1027,11 @@ void banner_X()
 
 void banner_parita()
 {
-//* Banner parita'
+/**----------------------
+    **   BANNER_PARITA
+    *? Banner pari
+    *@return void
+    *------------------------**/
 #ifdef _WIN32
     set_console_color(YELLOW);
     cout << " ____   _    ____  ___ _______   ___\n";
@@ -895,6 +1040,8 @@ void banner_parita()
     cout << "|  __/ ___ \\|  _ < | |  | |   | | |_|\n";
     cout << "|_| /_/   \\_\\_| \\_\\___| |_|   |_| (_)\n";
     set_console_color(WHITE);
+    /*=============================================*/
+
 #elif __APPLE__
     cout << setw(110) << color(YELLOW, "", " ▛▀▖▞▀▖▛▀▖▜▘▀▛▘▌ ▌ ▐\n");
     cout << setw(105) << color(YELLOW, "", " ▙▄▘▙▄▌▙▄▘▐  ▌ ▝▞  ▐\n ");
@@ -906,7 +1053,11 @@ void banner_parita()
 
 void guida()
 {
-    //* Guida al gioco
+    /**----------------------
+    **   GUIDA
+    *? Guida al gioco
+    *@return void
+    *------------------------**/
 #ifdef _WIN32
     set_console_color(YELLOW);
     cout << setw(50) << bold_on << "GUIDA AL GIOCO!\n"
@@ -934,3 +1085,5 @@ void guida()
     cin.get();
     cl();
 }
+
+/*========================================== FINE PROGRAMMA ==========================================*/
