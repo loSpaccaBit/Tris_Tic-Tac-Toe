@@ -111,7 +111,7 @@ int main()
 #ifdef _WIN32
     size_shell(800, 600);
 #elif __APPLE__
-    size_shell_MacOS("85", "18");
+    size_shell_MacOS("85", "20");
 #endif
 
     while (conta <= N_PARTITE)
