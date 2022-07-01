@@ -6,16 +6,16 @@
  * @filename       :  trisv4.cpp
  * @description    :  Gioco del Tris (Tic-Tac-Toe)
  *================================================================================================**/
-
 #ifdef _WIN32 //? implementazione Win
 #include <windows.h>
+/*================================ COLORI ==============================*/
 #define GREEN 10
 #define RED 12
 #define WHITE 15
 #define YELLOW 14
 #define BLUE 9
 #define MAGENTA 13
-/*================================ COLORI ==============================*/
+/*==============*/
 #elif __APPLE__
 #define GREEN "92"
 #define RED "91"
@@ -25,6 +25,7 @@
 #define MAGENTA "95"
 #define BOLD "1"
 #endif
+/*=======================================================================*/
 #include <iostream>
 #include <stdlib.h>
 #include <iomanip>
@@ -36,7 +37,7 @@ using namespace std;
 #define C 3 //! numero di colonne
 #define R 3 //! numero di righe
 
-/*========================================================================*/
+/*================================ INIZIO PROTOTIPI ==============================*/
 void cl(); // pulisci schermo
 #ifdef _WIN32
 void set_console_color(int dim);   //*Win
