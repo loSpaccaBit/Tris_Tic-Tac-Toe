@@ -3,9 +3,10 @@
  ** @author        :  Francesco Pio Nocerino
  * @email          :  nocerpio9@gmail.com
  * @createdOn      :  Jun-2022
- * @filename       :  tris.cpp
+ * @filename       :  tris_uomo_vs_pcv2.cpp
  * @description    :  Gioco del Tris (Tic-Tac-Toe)
  *================================================================================================**/
+//! AGGIORNAMENTO LE POSIZIONI SCELTE DALLA MACCHINA NON SONO DEL TUTTO CASUALI!
 #ifdef _WIN32 //? implementazione Win
 #include <windows.h>
 /*================================ COLORI ==============================*/
@@ -67,9 +68,11 @@ void inizializza(int dim, char tab[R][C]); // inizalizza la tavola
 void sleep(int d);
 void info(char umano, char pc, int punteggio_uomo, int punteggio_pc, int n_partite);
 void run(char segno, char segno_macchina, char tab[R][C], bool full, int &n_ply); //* Inserimento da parte dei ply
-void ps(int &x, int &r, int &c);                                                  // Posizioni
-void giocatore(char segno, char tab[R][C], bool full);                            // giocatore 1
-void stampa(int dim, char segno_umano, char tab[R][C], int n_color);              // stampa tavola
+void ps(int x, int &r, int &c);                                                   // Posizioni
+void cntrl_num(int &n);
+void giocatore(char segno, char tab[R][C], bool full); // giocatore 1
+void giocatore_macchina(char pc, char tab[R][C], bool full);
+void stampa(int dim, char segno_umano, char tab[R][C], int n_color); // stampa tavola
 /*================================ LOGICA ==============================*/
 
 bool mosse(int dim, char tab[R][C], char segno_uomo, bool &win);
@@ -359,21 +362,21 @@ void info(char umano, char pc, int punteggio_uomo, int punteggio_pc, int n_parti
      *@return voids
      *---------------------------------------------**/
 #ifdef _WIN32
-    cout << "PLY1 > ";
+    cout << "PLY > ";
     set_console_color(GREEN);
     cout << umano;
     set_console_color(WHITE);
-    cout << setw(8) << "PLY2 > ";
+    cout << setw(8) << "PC > ";
     set_console_color(RED);
     cout << pc << endl;
     set_console_color(WHITE);
     cout << "------------------\n";
     set_console_color(GREEN);
-    cout << "PLY1: ";
+    cout << "PLY: ";
     set_console_color(WHITE);
     cout << punteggio_uomo;
     set_console_color(RED);
-    cout << setw(8) << "PLY2: ";
+    cout << setw(8) << "PC: ";
     set_console_color(WHITE);
     cout << punteggio_pc << endl;
     set_console_color(WHITE);
@@ -381,9 +384,9 @@ void info(char umano, char pc, int punteggio_uomo, int punteggio_pc, int n_parti
 #elif __APPLE__
     cout << color(YELLOW, BOLD, "PARTITE : ") << color(BLUE, "", n_partite) << endl;
     cout << "------------------\n";
-    cout << "PLY1 > " << color(GREEN, "", umano) << setw(8) << "PLY2 > " << color(RED, "", pc) << endl;
+    cout << "PLY > " << color(GREEN, "", umano) << setw(8) << "PC > " << color(RED, "", pc) << endl;
     cout << "------------------\n";
-    cout << color(GREEN, BOLD, "PLY1 : ") << punteggio_uomo << setw(9) << color(RED, BOLD, " PLY2 : ") << punteggio_pc << endl;
+    cout << color(GREEN, BOLD, "PLY : ") << punteggio_uomo << setw(10) << color(RED, BOLD, "   PC : ") << punteggio_pc << endl;
     cout << "------------------\n";
 #endif
 }
@@ -417,7 +420,7 @@ void run(char segno, char segno_macchina, char tab[R][C], bool full, int &n_ply)
         cout << segno_macchina << endl;
         set_console_color(WHITE);
         stampa(C, segno, tab, n_ply);
-        giocatore(segno_macchina, tab, full);
+        giocatore_macchina(segno_macchina, tab, full);
         n_ply--;
     }
 #elif __APPLE__
@@ -432,13 +435,13 @@ void run(char segno, char segno_macchina, char tab[R][C], bool full, int &n_ply)
     {
         cout << "TURNO > " << color(RED, "", segno_macchina) << endl;
         stampa(C, segno, tab, n_ply);
-        giocatore(segno_macchina, tab, full);
+        giocatore_macchina(segno_macchina, tab, full);
         n_ply--;
     }
 #endif
 }
 
-void ps(int &x, int &r, int &c)
+void ps(int x, int &r, int &c)
 {
     /**------------------------------------------------------------------------
      **                           PS
@@ -446,51 +449,55 @@ void ps(int &x, int &r, int &c)
      *@param &x, &r e &c int  
      *@return void
      *------------------------------------------------------------------------**/
+
+    switch (x)
+    {
+    case 1:
+        r = 0;
+        c = 0;
+        break;
+    case 2:
+        r = 0;
+        c = 1;
+        break;
+    case 3:
+        r = 0;
+        c = 2;
+        break;
+    case 4:
+        r = 1;
+        c = 0;
+        break;
+    case 5:
+        r = 1;
+        c = 1;
+        break;
+    case 6:
+        r = 1;
+        c = 2;
+        break;
+    case 7:
+        r = 2;
+        c = 0;
+        break;
+    case 8:
+        r = 2;
+        c = 1;
+        break;
+    case 9:
+        r = 2;
+        c = 2;
+        break;
+    }
+}
+
+void cntrl_num(int &x)
+{
     cout << "Inserisci numero della posizione  > ";
     cin >> x;
     bool trv = false;
     do
     {
-
-        switch (x)
-        {
-        case 1:
-            r = 0;
-            c = 0;
-            break;
-        case 2:
-            r = 0;
-            c = 1;
-            break;
-        case 3:
-            r = 0;
-            c = 2;
-            break;
-        case 4:
-            r = 1;
-            c = 0;
-            break;
-        case 5:
-            r = 1;
-            c = 1;
-            break;
-        case 6:
-            r = 1;
-            c = 2;
-            break;
-        case 7:
-            r = 2;
-            c = 0;
-            break;
-        case 8:
-            r = 2;
-            c = 1;
-            break;
-        case 9:
-            r = 2;
-            c = 2;
-            break;
-        }
         if (x <= 9 && x > 0)
             trv = true;
         if (!trv)
@@ -515,7 +522,7 @@ void giocatore(char segno, char tab[R][C], bool full)
     bool trv = false;
     if (full)
         trv = true;
-
+    cntrl_num(n);
     ps(n, riga, colonna);
     do
     {
@@ -529,6 +536,32 @@ void giocatore(char segno, char tab[R][C], bool full)
         {
             cout << "\t!!\n";
             cout << "POSIZIONE OCCUPATA\n";
+            cntrl_num(n);
+            ps(n, riga, colonna);
+        }
+    } while (!trv);
+}
+
+void giocatore_macchina(char pc, char tab[R][C], bool full)
+{
+    int n, riga, colonna;
+    bool trv = false, m = false;
+    if (full)
+        trv = true;
+    n = num(10);
+    ps(n, riga, colonna);
+    do
+    {
+        //! Controllo sulle posizoni
+        m = mosse(3, tab, pc, m);
+        if (tab[riga][colonna] >= '0' && tab[riga][colonna] <= '9' && !m)
+        {
+            trv = true;
+            tab[riga][colonna] = pc;
+        }
+        if (trv == false) //* Posizione occupata
+        {
+            n = num(10);
             ps(n, riga, colonna);
         }
     } while (!trv);
