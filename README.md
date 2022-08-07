@@ -6,3 +6,4 @@ Ci sono due versioni la prima "tris.cpp" permette di giocare due giocatori, la s
 Happy Code!!
 
 Francesco Pio Nocerino
+https://github.com/KekkoDev/Tris_Tic-Tac-Toe/wiki
